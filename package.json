@@ -16,7 +16,5 @@
     "serverless-plugin-common-excludes": "^3.0.1",
     "serverless-plugin-include-dependencies": "^4.1.0"
   },
-  "dependencies": {
-    "phin": "^3.6.1"
-  }
+  "dependencies": {}
 }

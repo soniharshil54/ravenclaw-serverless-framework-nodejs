@@ -42,6 +42,8 @@ functions:
       - http: 
           path: testing
           method: get
+    layers:
+      - {Ref: PhinLambdaLayer}
     iamRoleStatements:
       - Effect: 'Allow'
         Action:
@@ -68,4 +70,19 @@ resources:
 
     #dynamodb tables
     EnvironmentsTable:
-      ${file(resources/dynamodb/environments.yml)}         
+      ${file(resources/dynamodb/environments.yml)}      
+
+layers:
+  phin:
+    path: layers/phin # required, path to layer contents on disk
+    name: ${sls:stage}-phin-layer # optional, Deployed Lambda layer name
+    description: Description of what the lambda layer does # optional, Description to publish to AWS
+    compatibleRuntimes: # optional, a list of runtimes this layer is compatible with
+      - nodejs14.x
+    compatibleArchitectures: # optional, a list of architectures this layer is compatible with
+      - x86_64
+      - arm64
+    # allowedAccounts: # optional, a list of AWS account IDs allowed to access this layer.
+    #   - '*'
+    # note: uncommenting this will give all AWS users access to this layer unconditionally.
+    retain: false # optional, false by default. If true, layer versions are not deleted as new ones are created         
