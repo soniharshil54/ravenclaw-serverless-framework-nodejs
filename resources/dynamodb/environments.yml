@@ -1,0 +1,13 @@
+Type: AWS::DynamoDB::Table
+Properties:
+  BillingMode: PAY_PER_REQUEST
+  KeySchema:
+    - AttributeName: channelName
+      KeyType: HASH
+    - AttributeName: envName
+      KeyType: RANGE 
+  AttributeDefinitions:
+    - AttributeName: channelName
+      AttributeType: S
+    - AttributeName: envName
+      AttributeType: S  

@@ -1,0 +1,10 @@
+{
+  "test": {
+    "region": "us-east-1",
+    "memorySize": "128"
+  },
+  "development": {
+    "region": "us-east-1",
+    "memorySize": "128"
+  }
+}

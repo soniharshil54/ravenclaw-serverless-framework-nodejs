@@ -1,0 +1,71 @@
+service: lambda-gateway-dynamodb
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  timeout: 10
+  region: ${self:custom.environment.region}
+  memorySize: ${self:custom.environment.memorySize}
+  apiKeys:
+    - lambda-gateway-dynamodb-${opt:stage}
+  environment:
+    ENVIRONMENTS_TABLE: !Ref EnvironmentsTable
+  
+custom:
+  environment: ${file(./config.json):${opt:stage}}
+  stackName: ${self:service}-${opt:stage}
+
+package:
+  exclude:
+    - node_modules/**/aws-sdk/**
+    - __tests__/**
+    - mapping-templates/**
+    - '*.json'
+    - '*.yml'
+    - '*.graphql'
+  excludeDevDependencies: true
+  individually: true
+
+plugins:
+  - serverless-iam-roles-per-function
+  - serverless-export-env
+  - serverless-plugin-include-dependencies
+  - serverless-plugin-common-excludes
+
+functions:
+
+  getEnvironmentList:
+    handler: functions/apis/getEnvironmentList.handler
+    events:
+      - http: 
+          path: testing
+          method: get
+    iamRoleStatements:
+      - Effect: 'Allow'
+        Action:
+          - ec2:*
+        Resource: '*'
+
+  getEnvironmentListPrivate:
+    handler: functions/apis/getEnvironmentListPrivate.handler
+    events:
+      - http: 
+          path: private
+          method: get 
+          private: true 
+    iamRoleStatementsName: environment-list-lambda-role    
+    iamRoleStatements:
+      - Effect: 'Allow'
+        Action:
+          - dynamodb:Scan
+        Resource: 
+          - !GetAtt EnvironmentsTable.Arn
+          
+resources:
+  Resources:
+
+    #dynamodb tables
+    EnvironmentsTable:
+      ${file(resources/dynamodb/environments.yml)}         
